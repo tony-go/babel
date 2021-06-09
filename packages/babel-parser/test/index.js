@@ -1,10 +1,14 @@
-import path from "path";
-import { runFixtureTests } from "./helpers/runFixtureTests";
+// import path from "path";
+// import { runFixtureTests } from "./helpers/runFixtureTests";
 import { parse } from "../lib";
-import { fileURLToPath } from "url";
+// import { fileURLToPath } from "url";
 
-const fixtures = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "fixtures",
-);
-runFixtureTests(fixtures, parse);
+// const fixtures = path.join(
+//   path.dirname(fileURLToPath(import.meta.url)),
+//   "fixtures",
+// );
+// runFixtureTests(fixtures, parse);
+
+test("test: const f = (x?) => {}", () => {
+  parse("const f = (x?) => {}");
+});

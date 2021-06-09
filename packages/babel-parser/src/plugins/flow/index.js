@@ -1924,6 +1924,13 @@ export default (superClass: Class<Parser>): Class<Parser> =>
         if (!result.node) {
           // $FlowIgnore
           refNeedsArrowPos.start = result.error.pos || this.state.start;
+          // TODO: create test with string `f = (x?) => {}`
+          // check call stack to see where it throw;
+          if (refNeedsArrowPos.start) {
+            console.log(refNeedsArrowPos);
+
+            this.unexpected(refNeedsArrowPos.start);
+          }
           return expr;
         }
 
@@ -1977,7 +1984,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
       node.test = expr;
       node.consequent = consequent;
       node.alternate = this.forwardNoArrowParamsConversionAt(node, () =>
-        this.parseMaybeAssign(undefined, undefined, undefined),
+        this.parseMaybeAssign(undefined, undefined),
       );
 
       return this.finishNode(node, "ConditionalExpression");
@@ -2824,7 +2831,6 @@ export default (superClass: Class<Parser>): Class<Parser> =>
     parseMaybeAssign(
       refExpressionErrors?: ?ExpressionErrors,
       afterLeftParse?: Function,
-      refNeedsArrowPos?: ?Pos,
     ): N.Expression {
       let state = null;
 
@@ -2837,12 +2843,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
         state = this.state.clone();
 
         jsx = this.tryParse(
-          () =>
-            super.parseMaybeAssign(
-              refExpressionErrors,
-              afterLeftParse,
-              refNeedsArrowPos,
-            ),
+          () => super.parseMaybeAssign(refExpressionErrors, afterLeftParse),
           state,
         );
         /*:: invariant(!jsx.aborted) */
@@ -2874,7 +2875,6 @@ export default (superClass: Class<Parser>): Class<Parser> =>
               const result = super.parseMaybeAssign(
                 refExpressionErrors,
                 afterLeftParse,
-                refNeedsArrowPos,
               );
 
               this.resetStartLocationFromNode(result, typeParameters);
@@ -2954,11 +2954,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
         );
       }
 
-      return super.parseMaybeAssign(
-        refExpressionErrors,
-        afterLeftParse,
-        refNeedsArrowPos,
-      );
+      return super.parseMaybeAssign(refExpressionErrors, afterLeftParse);
     }
 
     // handle return types for arrow functions

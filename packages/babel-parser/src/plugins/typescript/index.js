@@ -2457,12 +2457,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
       // only do the expensive clone if there is a question mark
       // and if we come from inside parens
       if (!refNeedsArrowPos || !this.match(tt.question)) {
-        return super.parseConditional(
-          expr,
-          startPos,
-          startLoc,
-          refNeedsArrowPos,
-        );
+        return super.parseConditional(expr, startPos, startLoc);
       }
 
       const result = this.tryParse(() =>
@@ -2472,6 +2467,10 @@ export default (superClass: Class<Parser>): Class<Parser> =>
       if (!result.node) {
         // $FlowIgnore
         refNeedsArrowPos.start = result.error.pos || this.state.start;
+        if (refNeedsArrowPos.start) {
+          // $FlowIgnore
+          this.unexpected(refNeedsArrowPos.start);
+        }
         return expr;
       }
       if (result.error) this.state = result.failState;
